@@ -6,6 +6,12 @@
 
 options(warn=1)
 library(rstan)
+configStan()
+
+#options("mc.cores")
+#print(rstan_options("auto_write"))
+#Sys.getenv("LOCAL_CPPFLAGS")
+
 myseed <- 20220304
 set.seed(myseed)
 
@@ -25,11 +31,11 @@ ds <- data.frame(list(school=c("A","B","C","D","E","F","G","H"),
                  stringsAsFactors=FALSE)
 
 ## Adding some variables that will be useful later
-ds <- within(ds, {
-    ucl <- mean + 1.96*se
-    lcl <- mean - 1.96*se
-    ref <- paste0("mu_i[", id, "]")
-})
+class(ds) <- c(class(ds), "normal")
+noPool(ds, clusterID="id", mu="mean", se="se")
+
+#class(ds) <- c(class(ds), "binomial")
+#noPool(ds, clusterID="school", num="id", denom="nc")
 
 
 ######################################################
